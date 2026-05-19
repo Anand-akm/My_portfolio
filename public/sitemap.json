@@ -1,0 +1,30 @@
+{
+  "index": {
+    "priority": "1.0",
+    "changeFrequency": "weekly"
+  },
+  "about": {
+    "priority": "0.9",
+    "changeFrequency": "monthly"
+  },
+  "skills": {
+    "priority": "0.8",
+    "changeFrequency": "monthly"
+  },
+  "projects": {
+    "priority": "0.9",
+    "changeFrequency": "weekly"
+  },
+  "experience": {
+    "priority": "0.8",
+    "changeFrequency": "monthly"
+  },
+  "certifications": {
+    "priority": "0.7",
+    "changeFrequency": "quarterly"
+  },
+  "contact": {
+    "priority": "0.8",
+    "changeFrequency": "monthly"
+  }
+}
