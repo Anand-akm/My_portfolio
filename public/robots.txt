@@ -1,0 +1,16 @@
+# User-agent: *
+# Allow all crawlers
+
+Sitemap: https://anandcodes.tech/sitemap.xml
+
+User-agent: *
+Allow: /
+
+# Crawl-delay directive (optional, be careful with this)
+Crawl-delay: 1
+
+# Disallow admin paths (if any)
+Disallow: /admin/
+
+# Allow search engines to see sitemaps
+Sitemap: https://anandcodes.tech/sitemap.xml
