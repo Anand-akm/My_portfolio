@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isClicking, setIsClicking] = useState(false);
-  
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
   
@@ -15,7 +12,13 @@ export function CustomCursor() {
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
+  const scaleRef = useRef(1);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
+    let isHovering = false;
+
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
@@ -23,60 +26,52 @@ export function CustomCursor() {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
+      const hovering = Boolean(
         target.tagName === "A" ||
-        target.tagName === "BUTTON" ||
-        target.closest("a") ||
-        target.closest("button") ||
-        target.classList.contains("cursor-pointer")
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
+          target.tagName === "BUTTON" ||
+          target.closest("a") ||
+          target.closest("button") ||
+          target.classList.contains("cursor-pointer")
+      );
+      
+      if (hovering !== isHovering) {
+        isHovering = hovering;
+        const newScale = isHovering ? 1.5 : 1;
+        if (innerRef.current) innerRef.current.style.transform = `scale(${newScale})`;
+        if (outerRef.current) outerRef.current.style.transform = `scale(${isHovering ? 2 : 1})`;
+        if (outerRef.current) outerRef.current.style.opacity = isHovering ? '0.5' : '0.3';
       }
     };
 
-    const handleMouseDown = () => setIsClicking(true);
-    const handleMouseUp = () => setIsClicking(false);
-
-    window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleMouseOver);
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousemove", moveCursor, { passive: true });
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
       window.removeEventListener("mouseover", handleMouseOver);
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [cursorX, cursorY]);
 
   return (
     <>
       <motion.div
-        ref={cursorRef}
-        className="fixed top-0 left-0 w-4 h-4 bg-primary rounded-full pointer-events-none z-[9999] mix-blend-difference"
+        ref={innerRef}
+        className="fixed top-0 left-0 w-4 h-4 bg-primary rounded-full pointer-events-none z-[9999] mix-blend-difference will-change-transform"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
+          transition: 'transform 0.15s ease',
         }}
-        animate={{
-          scale: isClicking ? 0.8 : isHovering ? 1.5 : 1,
-        }}
-        transition={{ duration: 0.15 }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-10 h-10 border border-primary/50 rounded-full pointer-events-none z-[9998]"
+        ref={outerRef}
+        className="fixed top-0 left-0 w-10 h-10 border border-primary/50 rounded-full pointer-events-none z-[9998] will-change-transform"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
+          opacity: 0.3,
+          transition: 'transform 0.15s ease, opacity 0.15s ease',
         }}
-        animate={{
-          scale: isClicking ? 1.2 : isHovering ? 2 : 1,
-          opacity: isHovering ? 0.5 : 0.3,
-        }}
-        transition={{ duration: 0.15 }}
       />
     </>
   );

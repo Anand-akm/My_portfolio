@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, Linkedin, Twitter, Mail, Heart, Zap, Database } from "lucide-react";
-import { siteConfig } from "@/data/content";
+import { Mail, Heart, Zap, Database } from "lucide-react";
+import { Github, Linkedin, Twitter } from "@/components/ui/brand-icons";
+import { siteConfig, navItems } from "@/data/content";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -38,14 +39,14 @@ export function Footer() {
           >
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <div className="flex flex-col gap-2">
-              {["About", "Skills", "Projects", "Certifications", "GitHub", "Contact"].map((link) => (
+              {navItems.map((link) => (
                 <a
-                  key={link}
-                  href={`#${link.toLowerCase()}`}
+                  key={link.name}
+                  href={link.href}
                   className="text-muted-foreground text-sm hover:text-primary transition-colors inline-flex items-center gap-2"
                 >
                   <Zap className="w-3 h-3" />
-                  {link}
+                  {link.name}
                 </a>
               ))}
             </div>
@@ -98,15 +99,14 @@ export function Footer() {
 
 function SocialLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
   return (
-    <motion.a
+    <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all"
-      whileHover={{ y: -4, scale: 1.1 }}
+      className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-primary/10 transition-all hover-lift"
       aria-label={label}
     >
       {icon}
-    </motion.a>
+    </a>
   );
 }

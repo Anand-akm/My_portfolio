@@ -1,0 +1,12 @@
+export { siteConfig } from "./profile";
+export { navItems, taglines, heroStats } from "./constants";
+export { skills } from "./skills";
+export { projects } from "./projects";
+export { experience } from "./experience";
+export { certifications } from "./certifications";
+export { githubStats } from "./github";
+export { testimonials } from "./testimonials";
+export { education } from "./education";
+export { knowledgeBase } from "./ai-knowledge";
+export { suggestedQuestions } from "./suggested-questions";
+export type { SuggestedQuestion } from "./suggested-questions";

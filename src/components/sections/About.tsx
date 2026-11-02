@@ -2,7 +2,8 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { Sparkles, Cpu, Cloud, Database, Zap, GitBranch, Terminal, Rocket, Brain, Server, Boxes } from "lucide-react";
+import { Sparkles, Cloud, Database, Zap, Terminal, Rocket, Brain, Boxes } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { certifications } from "@/data/content";
@@ -68,15 +69,12 @@ export function About() {
             transition={{ duration: 0.8 }}
           >
             <Card className="p-8 md:p-10 glass-hover h-full relative overflow-hidden">
-              <motion.div
-                className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-3xl"
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity }}
+              <div
+                className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-3xl animate-spin-slow"
               />
-              <motion.div
-                className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full blur-3xl"
-                animate={{ rotate: [0, -360] }}
-                transition={{ duration: 25, repeat: Infinity }}
+              <div
+                className="absolute -bottom-20 -left-20 w-40 h-40 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full blur-3xl animate-spin-slow"
+                style={{ animationDirection: 'reverse', animationDuration: '25s' }}
               />
               
               <div className="relative z-10">
@@ -242,13 +240,12 @@ export function About() {
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity"
               />
-              <motion.div
-                className="text-4xl mb-3"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+              <div
+                className="text-4xl mb-3 will-change-transform"
+                style={{ animation: `float ${2 + i * 0.2}s ease-in-out infinite ${i * 0.2}s` }}
               >
                 {stat.icon}
-              </motion.div>
+              </div>
               <div className="text-3xl md:text-4xl font-bold text-gradient mb-1">{stat.value}</div>
               <div className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{stat.label}</div>
             </motion.div>
@@ -262,35 +259,18 @@ export function About() {
 function BackgroundEffects() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      <motion.div
-        className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px]"
-        animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
-        transition={{ duration: 10, repeat: Infinity }}
-      />
-      <motion.div
-        className="absolute bottom-1/4 -right-32 w-96 h-96 bg-secondary/10 rounded-full blur-[120px]"
-        animate={{ x: [0, -50, 0], y: [0, -30, 0] }}
-        transition={{ duration: 12, repeat: Infinity }}
-      />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse-slow" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
       <div className="absolute inset-0 grid-bg opacity-10" />
       
-      {[...Array(12)].map((_, i) => (
-        <motion.div
+      {[...Array(6)].map((_, i) => (
+        <div
           key={i}
-          className="absolute w-1.5 h-1.5 bg-primary rounded-full opacity-30"
+          className="absolute w-1.5 h-1.5 bg-primary rounded-full opacity-30 will-change-transform"
           style={{
-            left: `${5 + i * 8}%`,
-            top: `${10 + (i % 4) * 25}%`,
-          }}
-          animate={{
-            y: [0, -40, 0],
-            opacity: [0.2, 0.6, 0.2],
-            scale: [0.8, 1.2, 0.8],
-          }}
-          transition={{
-            duration: 4 + i * 0.3,
-            repeat: Infinity,
-            delay: i * 0.3,
+            left: `${10 + i * 15}%`,
+            top: `${15 + (i % 3) * 30}%`,
+            animation: `float ${4 + i * 0.5}s ease-in-out infinite ${i * 0.5}s`,
           }}
         />
       ))}
@@ -303,28 +283,32 @@ function BackgroundEffects() {
             <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <motion.path
+        <path
           d="M 100 100 Q 300 200 500 150"
           stroke="url(#neuralLine)"
           strokeWidth="1"
           fill="none"
-          animate={{ strokeDashoffset: [0, 50], opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 3, repeat: Infinity }}
+          opacity="0.3"
         />
-        <motion.path
+        <path
           d="M 150 300 Q 400 250 600 350"
           stroke="url(#neuralLine)"
           strokeWidth="1"
           fill="none"
-          animate={{ strokeDashoffset: [50, 0], opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 4, repeat: Infinity }}
+          opacity="0.3"
         />
       </svg>
     </div>
   );
 }
 
-function HighlightCard({ item, index }: { item: any; index: number }) {
+function HighlightCard({
+  item,
+  index,
+}: {
+  item: { icon: LucideIcon; title: string; desc: string; color: string };
+  index: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 

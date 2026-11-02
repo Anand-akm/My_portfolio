@@ -2,7 +2,8 @@
 
 import { useState, useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { ExternalLink, Github, Filter, Database, BarChart3, Cpu, Zap } from "lucide-react";
+import { ExternalLink, Filter, Database, BarChart3, Cpu, Zap } from "lucide-react";
+import { Github } from "@/components/ui/brand-icons";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -68,23 +69,18 @@ export function Projects() {
           ))}
         </div>
 
-        <motion.div
+        <div
           className="grid grid-cols-1 md:grid-cols-2 gap-8"
-          layout
         >
           {filteredProjects.map((project, i) => (
-            <motion.div
+            <div
               key={project.title}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              layout
+              className="opacity-100"
             >
               <ProjectCard project={project} />
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

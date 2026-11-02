@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Terminal, Home, User, Code2, FolderKanban, Award, Mail, Zap } from "lucide-react";
+import { Menu, X, Terminal, Home, User, Code2, FolderKanban, Award, Mail, Zap, Bot, Mic, Briefcase, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navItems, siteConfig } from "@/data/content";
 
@@ -15,16 +16,23 @@ export function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
-      const sections = ["hero", ...navItems.map(item => item.href.replace("#", ""))];
-      for (const section of sections.reverse()) {
-        const element = document.getElementById(section);
-        if (element && window.scrollY >= element.offsetTop - 200) {
-          setActiveSection(section);
+
+      const sections = ["hero", ...navItems.map((item) => item.href.replace("#", ""))];
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const element = document.getElementById(sections[i]);
+        if (!element) continue;
+
+        const sectionTop = element.getBoundingClientRect().top + window.scrollY;
+        if (window.scrollY >= sectionTop - 180) {
+          setActiveSection(sections[i]);
           break;
         }
       }
     };
-    window.addEventListener("scroll", handleScroll);
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -68,18 +76,19 @@ export function Navbar() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5 }}
-            className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 ml-3 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-medium"
+            className="hidden 2xl:inline-flex items-center gap-1.5 px-2.5 py-1 ml-3 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-xs font-medium"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
             Available for opportunities
           </motion.span>
 
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-0.5">
             {navItems.map((item, i) => (
               <motion.a
                 key={item.name}
                 href={item.href}
-                className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                aria-current={activeSection === item.href.replace("#", "") ? "true" : undefined}
+                className={`relative px-2 xl:px-2.5 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
                   activeSection === item.href.replace("#", "")
                     ? "bg-primary/20 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-white/5"
@@ -101,17 +110,31 @@ export function Navbar() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.55 }}
+              className="ml-1.5 xl:ml-2"
+            >
+              <Button asChild size="sm" className="gap-2">
+                <Link href="/ai">
+                  <Mic className="w-4 h-4" />
+                  <span className="hidden 2xl:inline">Talk to Anand AI</span>
+                  <span className="2xl:hidden">AI</span>
+                </Link>
+              </Button>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 }}
             >
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsTerminalMode(true)}
-                className="gap-2 ml-4"
+                className="gap-2 ml-1.5 xl:ml-2"
               >
                 <Terminal className="w-4 h-4" />
-                <span className="hidden md:inline">Terminal</span>
-                <kbd className="hidden md:inline text-xs bg-muted px-1.5 py-0.5 rounded ml-1">⌘`</kbd>
+                <span className="hidden 2xl:inline">Terminal</span>
+                <kbd className="hidden 2xl:inline text-xs bg-muted px-1.5 py-0.5 rounded ml-1">⌘`</kbd>
               </Button>
             </motion.div>
           </div>
@@ -162,7 +185,13 @@ export function Navbar() {
                   </motion.a>
                 ))}
               </div>
-              <div className="mt-auto">
+              <div className="mt-auto space-y-2">
+                <Button asChild className="w-full gap-2">
+                  <Link href="/ai" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Mic className="w-4 h-4" />
+                    Talk to Anand AI
+                  </Link>
+                </Button>
                 <Button
                   variant="outline"
                   className="w-full gap-2"
@@ -194,8 +223,11 @@ const dockItems = [
   { icon: User, label: "About", href: "#about" },
   { icon: Code2, label: "Skills", href: "#skills" },
   { icon: FolderKanban, label: "Projects", href: "#projects" },
+  { icon: Briefcase, label: "Experience", href: "#experience" },
+  { icon: GraduationCap, label: "Education", href: "#education" },
   { icon: Award, label: "Certifications", href: "#certifications" },
   { icon: Mail, label: "Contact", href: "#contact" },
+  { icon: Bot, label: "Anand AI", href: "/ai" },
 ];
 
 function FloatingDock() {
@@ -230,20 +262,17 @@ function FloatingDock() {
                 className="relative w-10 h-10 flex items-center justify-center rounded-xl transition-all"
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                whileHover={{ y: -8 }}
                 whileTap={{ scale: 0.9 }}
               >
                 <item.icon className={`w-5 h-5 transition-colors ${
                   hoveredIndex === i ? "text-primary" : "text-muted-foreground"
                 }`} />
                 {hoveredIndex === i && (
-                  <motion.span
-                    className="absolute -top-10 px-3 py-1.5 rounded-lg glass text-xs font-medium whitespace-nowrap"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
+                  <span
+                    className="absolute -top-10 px-3 py-1.5 rounded-lg glass text-xs font-medium whitespace-nowrap animate-in"
                   >
                     {item.label}
-                  </motion.span>
+                  </span>
                 )}
               </motion.a>
             ))}
@@ -381,7 +410,7 @@ function TerminalModal({ onClose }: { onClose: () => void }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4"
       onClick={onClose}
     >
       <motion.div

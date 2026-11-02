@@ -61,13 +61,11 @@ export function Certifications() {
                     >
                       <span className="text-2xl font-bold text-white">{cert.badge}</span>
                     </motion.div>
-                    <motion.div
-                      className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center"
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                    <div
+                      className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center animate-pulse-slow"
                     >
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    </motion.div>
+                    </div>
                   </div>
 
                   <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">

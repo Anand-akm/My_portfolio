@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 export function ScrollProgress() {
   const [progress, setProgress] = useState(0);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const updateProgress = () => {
@@ -13,41 +13,51 @@ export function ScrollProgress() {
       setProgress((scrolled / scrollHeight) * 100);
     };
 
-    window.addEventListener("scroll", updateProgress);
+    window.addEventListener("scroll", updateProgress, { passive: true });
     return () => window.removeEventListener("scroll", updateProgress);
   }, []);
 
   return (
-    <motion.div
+    <div
       className="fixed top-0 left-0 right-0 h-1 z-[60] bg-muted"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      style={{ opacity: 1 }}
     >
-      <motion.div
-        className="h-full bg-gradient-to-r from-primary via-secondary to-accent"
+      <div
+        className="h-full bg-gradient-to-r from-primary via-secondary to-accent transition-[width] duration-150"
         style={{ width: `${progress}%` }}
       />
-    </motion.div>
+    </div>
   );
 }
 
 export function MouseFollowGlow() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const glowRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      if (glowRef.current) {
+        glowRef.current.style.setProperty('--mouse-x', `${e.clientX}px`);
+        glowRef.current.style.setProperty('--mouse-y', `${e.clientY}px`);
+      }
+    });
+  }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [handleMouseMove]);
 
   return (
     <div
+      ref={glowRef}
       className="fixed inset-0 pointer-events-none z-0"
       style={{
-        background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.1), transparent 40%)`,
+        background: `radial-gradient(600px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(59, 130, 246, 0.08), transparent 40%)`,
       }}
     />
   );

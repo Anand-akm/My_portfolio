@@ -1,42 +1,49 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { LoadingScreen } from "@/components/ui/loading-screen";
-import { CustomCursor } from "@/components/ui/custom-cursor";
 import { ScrollProgress, MouseFollowGlow } from "@/components/ui/scroll-progress";
 import { CommandMenu } from "@/components/ui/command-menu";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+  const isAIPage = pathname?.startsWith("/ai");
 
   useEffect(() => {
-    setMounted(true);
-    const timer = setTimeout(() => setIsLoading(false), 2000);
+    const timer = setTimeout(() => setIsLoading(false), 2500);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      <AnimatePresence>{isLoading && <LoadingScreen />}</AnimatePresence>
-      
-      {mounted && <CustomCursor />}
-      
-      <MouseFollowGlow />
-      <ScrollProgress />
-      
-      <Navbar />
-      
-      <main className="relative">
+      <a href="#main-content" className="skip-to-content">
+        Skip to content
+      </a>
+
+      {!isAIPage && isLoading && <LoadingScreen />}
+
+      {!isAIPage && (
+        <>
+          <ScrollProgress />
+          <MouseFollowGlow />
+          <Navbar />
+        </>
+      )}
+
+      <main id="main-content" className="relative">
         {children}
       </main>
-      
-      <Footer />
-      
-      <CommandMenu />
+
+      {!isAIPage && (
+        <>
+          <Footer />
+          <CommandMenu />
+        </>
+      )}
     </>
   );
 }

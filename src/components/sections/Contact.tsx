@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Mail, MapPin, Clock, Github, Linkedin, Twitter } from "lucide-react";
+import { Send, Mail, MapPin, Clock } from "lucide-react";
+import { Github, Linkedin, Twitter } from "@/components/ui/brand-icons";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -223,14 +224,13 @@ function ContactInfoItem({
 
 function SocialLink({ href, icon }: { href: string; icon: React.ReactNode }) {
   return (
-    <motion.a
+    <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-12 h-12 flex items-center justify-center rounded-lg glass hover:bg-primary/20 transition-colors"
-      whileHover={{ y: -4 }}
+      className="w-12 h-12 flex items-center justify-center rounded-lg glass hover:bg-primary/20 transition-colors hover-lift"
     >
       {icon}
-    </motion.a>
+    </a>
   );
 }

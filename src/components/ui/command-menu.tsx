@@ -5,11 +5,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, ArrowRight, Terminal } from "lucide-react";
 
 const commands = [
+  { id: "ai", label: "Anand AI", description: "Talk to Anand AI (voice + text)", icon: "🤖" },
+  { id: "hero", label: "Home", description: "Back to the top", icon: "🏠" },
   { id: "about", label: "About", description: "Learn about Anand", icon: "👤" },
   { id: "skills", label: "Skills", description: "View technical skills", icon: "💻" },
   { id: "projects", label: "Projects", description: "See featured projects", icon: "🚀" },
   { id: "experience", label: "Experience", description: "Work history", icon: "💼" },
+  { id: "education", label: "Education", description: "Academic background", icon: "🎓" },
   { id: "certifications", label: "Certifications", description: "Professional certs", icon: "🏆" },
+  { id: "github", label: "GitHub", description: "Open source projects", icon: "🐙" },
   { id: "contact", label: "Contact", description: "Get in touch", icon: "📧" },
 ];
 
@@ -22,7 +26,7 @@ export function CommandMenu() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault();
-        setIsOpen(true);
+        setQuery(""); setSelectedIndex(0); setIsOpen(true);
       }
       if (e.key === "Escape") {
         setIsOpen(false);
@@ -33,18 +37,22 @@ export function CommandMenu() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setQuery("");
-      setSelectedIndex(0);
-    }
-  }, [isOpen]);
+  const handleOpen = () => {
+    setQuery("");
+    setSelectedIndex(0);
+    setIsOpen(true);
+  };
 
   const filteredCommands = commands.filter((cmd) =>
     cmd.label.toLowerCase().includes(query.toLowerCase())
   );
 
   const handleSelect = (id: string) => {
+    if (id === "ai") {
+      window.location.href = "/ai";
+      setIsOpen(false);
+      return;
+    }
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
@@ -70,7 +78,7 @@ export function CommandMenu() {
   return (
     <>
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
         className="fixed bottom-6 right-6 z-50 glass px-4 py-3 rounded-full flex items-center gap-3 text-sm text-muted-foreground hover:text-foreground transition-colors group"
       >
         <Search className="w-4 h-4" />

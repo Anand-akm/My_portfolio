@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, ExternalLink, Star, GitFork, Code2, Zap, Database } from "lucide-react";
+import { ExternalLink, Star, GitFork, Code2, Zap, Database } from "lucide-react";
+import { Github } from "@/components/ui/brand-icons";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
