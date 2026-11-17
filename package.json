@@ -13,7 +13,6 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@next/swc-win32-x64-msvc": "^16.4.2",
     "@radix-ui/react-slot": "^1.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
